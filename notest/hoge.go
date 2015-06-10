@@ -1,0 +1,4 @@
+package hoge
+
+func Hoge() {
+}

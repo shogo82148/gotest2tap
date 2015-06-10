@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+use utf8;
+
+my $sub_test_count = 0;
+my $test_count = 0;
+
+while (my $line = <>) {
+    chomp $line;
+    my ($result, $test_name);
+    if (($result, $test_name) = $line =~ /^--- (PASS|FAIL): (.+)/) {
+        $sub_test_count++;
+        printf "    %s %d - %s\n", $result eq "PASS" ? "ok" : "not ok", $sub_test_count, $test_name;
+    }
+    elsif (($test_name) = $line =~ /^--- SKIP: (.+)/) {
+        $sub_test_count++;
+        printf "    ok %d - # SKIP %s\n", $sub_test_count, $test_name;
+    }
+    elsif (($result, $test_name) = $line =~ /^(ok|FAIL)\s+(.+)/) {
+        if ($sub_test_count) {
+            printf "    1..%d\n", $sub_test_count;
+            $sub_test_count = 0;
+        }
+        $test_count++;
+        printf "%s %d - %s\n", $result eq "ok" ? "ok" : "not ok", $test_count, $test_name;
+    }
+    else {
+        print "# $line\n";
+    }
+}
+
+printf "1..%d\n", $test_count;
